@@ -1,8 +1,8 @@
 package service
 
 import (
-	todo "todo-app"
-	"todo-app/pkg/repository"
+	"todo-app-go/pkg/model"
+	"todo-app-go/pkg/repository"
 )
 
 type TodoListService struct {
@@ -13,15 +13,15 @@ func NewTodoListService(repo repository.TodoList) *TodoListService {
 	return &TodoListService{repo: repo}
 }
 
-func (s *TodoListService) Create(userId int, list todo.TodoList) (int, error) {
+func (s *TodoListService) Create(userId int, list model.TodoList) (int, error) {
 	return s.repo.Create(userId, list)
 }
 
-func (s *TodoListService) GetAll(userId int) ([]todo.TodoList, error) {
+func (s *TodoListService) GetAll(userId int) ([]model.TodoList, error) {
 	return s.repo.GetAll(userId)
 }
 
-func (s *TodoListService) GetById(userId, listId int) (todo.TodoList, error) {
+func (s *TodoListService) GetById(userId, listId int) (model.TodoList, error) {
 	return s.repo.GetById(userId, listId)
 }
 
@@ -29,7 +29,7 @@ func (s *TodoListService) Delete(userId, listId int) error {
 	return s.repo.Delete(userId, listId)
 }
 
-func (s *TodoListService) Update(userId, listId int, input todo.UpdateListInput) error {
+func (s *TodoListService) Update(userId, listId int, input model.UpdateListInput) error {
 	if err := input.Validate(); err != nil {
 		return err
 	}

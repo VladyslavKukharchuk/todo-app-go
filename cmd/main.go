@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
-	"todo-app"
-	"todo-app/pkg/handler"
-	"todo-app/pkg/repository"
-	"todo-app/pkg/service"
+	"todo-app-go"
+	"todo-app-go/pkg/handler"
+	"todo-app-go/pkg/repository"
+	"todo-app-go/pkg/service"
 )
 
 func main() {

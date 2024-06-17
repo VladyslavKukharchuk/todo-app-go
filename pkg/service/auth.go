@@ -1,8 +1,8 @@
 package service
 
 import (
-	todo "todo-app"
-	"todo-app/pkg/repository"
+	"todo-app-go/pkg/model"
+	"todo-app-go/pkg/repository"
 )
 
 //const (
@@ -24,7 +24,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) CreateUser(user todo.User) (int, error) {
+func (s *AuthService) CreateUser(user model.User) (int, error) {
 	user.Password = generatePasswordHash(user.Password)
 	return s.repo.CreateUser(user)
 }

@@ -1,10 +1,9 @@
 package handler
 
 import (
-	"net/http"
-	todo "todo-app"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"todo-app-go/pkg/model"
 )
 
 // @Summary SignUp
@@ -20,7 +19,7 @@ import (
 // @Failure default {object} errorResponse
 // @Router /auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
-	var input todo.User
+	var input model.User
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"database/sql"
-	todo "todo-app"
+	"todo-app-go/pkg/model"
 )
 
 type TodoListPostgres struct {
@@ -13,7 +13,7 @@ func NewTodoListPostgres(db *sql.DB) *TodoListPostgres {
 	return &TodoListPostgres{db: db}
 }
 
-func (r *TodoListPostgres) Create(userId int, list todo.TodoList) (int, error) {
+func (r *TodoListPostgres) Create(userId int, list model.TodoList) (int, error) {
 	//tx, err := r.db.Begin()
 	//if err != nil {
 	//	return 0, err
@@ -38,7 +38,7 @@ func (r *TodoListPostgres) Create(userId int, list todo.TodoList) (int, error) {
 	return 0, nil
 }
 
-func (r *TodoListPostgres) GetAll(userId int) ([]todo.TodoList, error) {
+func (r *TodoListPostgres) GetAll(userId int) ([]model.TodoList, error) {
 	//var lists []todo.TodoList
 	//
 	//query := fmt.Sprintf("SELECT tl.id, tl.title, tl.description FROM %s tl INNER JOIN %s ul on tl.id = ul.list_id WHERE ul.user_id = $1",
@@ -46,10 +46,10 @@ func (r *TodoListPostgres) GetAll(userId int) ([]todo.TodoList, error) {
 	//err := r.db.Select(&lists, query, userId)
 	//
 	//return lists, err
-	return []todo.TodoList{}, nil
+	return []model.TodoList{}, nil
 }
 
-func (r *TodoListPostgres) GetById(userId, listId int) (todo.TodoList, error) {
+func (r *TodoListPostgres) GetById(userId, listId int) (model.TodoList, error) {
 	//var list todo.TodoList
 	//
 	//query := fmt.Sprintf(`SELECT tl.id, tl.title, tl.description FROM %s tl
@@ -58,7 +58,7 @@ func (r *TodoListPostgres) GetById(userId, listId int) (todo.TodoList, error) {
 	//err := r.db.Get(&list, query, userId, listId)
 	//
 	//return list, err
-	return todo.TodoList{}, nil
+	return model.TodoList{}, nil
 }
 
 func (r *TodoListPostgres) Delete(userId, listId int) error {
@@ -70,7 +70,7 @@ func (r *TodoListPostgres) Delete(userId, listId int) error {
 	return nil
 }
 
-func (r *TodoListPostgres) Update(userId, listId int, input todo.UpdateListInput) error {
+func (r *TodoListPostgres) Update(userId, listId int, input model.UpdateListInput) error {
 	//setValues := make([]string, 0)
 	//args := make([]interface{}, 0)
 	//argId := 1

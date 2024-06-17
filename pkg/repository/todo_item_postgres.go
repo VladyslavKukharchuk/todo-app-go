@@ -2,7 +2,7 @@ package repository
 
 import (
 	"database/sql"
-	todo "todo-app"
+	"todo-app-go/pkg/model"
 )
 
 type TodoItemPostgres struct {
@@ -13,7 +13,7 @@ func NewTodoItemPostgres(db *sql.DB) *TodoItemPostgres {
 	return &TodoItemPostgres{db: db}
 }
 
-func (r *TodoItemPostgres) Create(listId int, item todo.TodoItem) (int, error) {
+func (r *TodoItemPostgres) Create(listId int, item model.TodoItem) (int, error) {
 	//tx, err := r.db.Begin()
 	//if err != nil {
 	//	return 0, err
@@ -40,7 +40,7 @@ func (r *TodoItemPostgres) Create(listId int, item todo.TodoItem) (int, error) {
 	return 0, nil
 }
 
-func (r *TodoItemPostgres) GetAll(userId, listId int) ([]todo.TodoItem, error) {
+func (r *TodoItemPostgres) GetAll(userId, listId int) ([]model.TodoItem, error) {
 	//var items []todo.TodoItem
 	//query := fmt.Sprintf(`SELECT ti.id, ti.title, ti.description, ti.done FROM %s ti INNER JOIN %s li on li.item_id = ti.id
 	//								INNER JOIN %s ul on ul.list_id = li.list_id WHERE li.list_id = $1 AND ul.user_id = $2`,
@@ -50,10 +50,10 @@ func (r *TodoItemPostgres) GetAll(userId, listId int) ([]todo.TodoItem, error) {
 	//}
 	//
 	//return items, nil
-	return []todo.TodoItem{}, nil
+	return []model.TodoItem{}, nil
 }
 
-func (r *TodoItemPostgres) GetById(userId, itemId int) (todo.TodoItem, error) {
+func (r *TodoItemPostgres) GetById(userId, itemId int) (model.TodoItem, error) {
 	//var item todo.TodoItem
 	//query := fmt.Sprintf(`SELECT ti.id, ti.title, ti.description, ti.done FROM %s ti INNER JOIN %s li on li.item_id = ti.id
 	//								INNER JOIN %s ul on ul.list_id = li.list_id WHERE ti.id = $1 AND ul.user_id = $2`,
@@ -63,7 +63,7 @@ func (r *TodoItemPostgres) GetById(userId, itemId int) (todo.TodoItem, error) {
 	//}
 	//
 	//return item, nil
-	return todo.TodoItem{}, nil
+	return model.TodoItem{}, nil
 }
 
 func (r *TodoItemPostgres) Delete(userId, itemId int) error {
@@ -75,7 +75,7 @@ func (r *TodoItemPostgres) Delete(userId, itemId int) error {
 	return nil
 }
 
-func (r *TodoItemPostgres) Update(userId, itemId int, input todo.UpdateItemInput) error {
+func (r *TodoItemPostgres) Update(userId, itemId int, input model.UpdateItemInput) error {
 	//setValues := make([]string, 0)
 	//args := make([]interface{}, 0)
 	//argId := 1
