@@ -7,9 +7,11 @@ services:
     volumes:
     - db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=qwerty
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
-      - "5436:5432"
+      - "5436:${DB_PORT}"
 
 volumes:
   db:
