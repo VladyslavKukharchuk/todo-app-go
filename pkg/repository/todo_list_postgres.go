@@ -1,15 +1,15 @@
 package repository
 
 import (
-	"database/sql"
+	"gorm.io/gorm"
 	"todo-app-go/pkg/model"
 )
 
 type TodoListPostgres struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
-func NewTodoListPostgres(db *sql.DB) *TodoListPostgres {
+func NewTodoListPostgres(db *gorm.DB) *TodoListPostgres {
 	return &TodoListPostgres{db: db}
 }
 

@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"database/sql"
+	"gorm.io/gorm"
 	"todo-app-go/pkg/model"
 )
 
@@ -32,7 +32,7 @@ type Repository struct {
 	TodoItem
 }
 
-func NewRepository(db *sql.DB) *Repository {
+func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
 		TodoList:      NewTodoListPostgres(db),

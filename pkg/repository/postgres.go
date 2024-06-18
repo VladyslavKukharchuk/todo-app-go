@@ -1,7 +1,9 @@
 package repository
 
 import (
-	"database/sql"
+	"fmt"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 const (
@@ -21,7 +23,7 @@ type Config struct {
 	SSLMode  string
 }
 
-func NewPostgresDB(cfg Config) (*sql.DB, error) {
+func NewPostgresDB(cfg Config) (*gorm.DB, error) {
 	//db, err := sqlx.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 	//	cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.Password, cfg.SSLMode))
 	//if err != nil {
@@ -34,5 +36,13 @@ func NewPostgresDB(cfg Config) (*sql.DB, error) {
 	//}
 	//
 	//return db, nil
-	return &sql.DB{}, nil
+
+	dbURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.Password, cfg.SSLMode)
+
+	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }

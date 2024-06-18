@@ -1,15 +1,15 @@
 package repository
 
 import (
-	"database/sql"
+	"gorm.io/gorm"
 	"todo-app-go/pkg/model"
 )
 
 type AuthPostgres struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
-func NewAuthPostgres(db *sql.DB) *AuthPostgres {
+func NewAuthPostgres(db *gorm.DB) *AuthPostgres {
 	return &AuthPostgres{db: db}
 }
 
