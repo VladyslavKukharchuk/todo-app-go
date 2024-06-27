@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"github.com/joho/godotenv"
 	"log"
+	"os"
 	"todo-app-go"
 	"todo-app-go/pkg/handler"
 	"todo-app-go/pkg/repository"
@@ -9,13 +12,19 @@ import (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+		return
+	}
+
 	db, err := repository.NewPostgresDB(repository.Config{
-		Host:     "localhost",
-		Port:     "5432",
-		Username: "postgres",
-		DBName:   "postgres",
-		SSLMode:  "disable",
-		Password: "qwerty",
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		Username: os.Getenv("DB_USERNAME"),
+		DBName:   os.Getenv("DB_NAME"),
+		Password: os.Getenv("DB_PASSWORD"),
+		SSLMode:  os.Getenv("DB_SSLMODE"),
 	})
 	if err != nil {
 		log.Fatalf("failed to initialize db: %s", err.Error())
