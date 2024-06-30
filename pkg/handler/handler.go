@@ -26,7 +26,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			lists.GET("/", h.UserHandler.GetAll)
 			lists.GET("/:id", h.UserHandler.GetById)
 			lists.PUT("/:id", h.UserHandler.Update)
-			lists.DELETE("/:id", h.UserHandler.Update)
+			lists.DELETE("/:id", h.UserHandler.Delete)
 		}
 	}
 

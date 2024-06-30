@@ -3,7 +3,7 @@ package service
 import (
 	"crypto/sha1"
 	"fmt"
-	"todo-app-go/pkg/model"
+	"todo-app-go/pkg/dto"
 	"todo-app-go/pkg/repository"
 )
 
@@ -12,11 +12,11 @@ const (
 )
 
 type UserServiceInterface interface {
-	Create(input model.CreateUserInput) (int, error)
-	GetAll() ([]model.User, error)
-	GetById(userId int) (model.User, error)
+	Create(userData dto.CreateUserRequest) (dto.UserResponse, error)
+	GetAll() ([]dto.UserResponse, error)
+	GetById(userId int) (dto.UserResponse, error)
+	Update(userId int, userData dto.UpdateUserRequest) (dto.UserResponse, error)
 	Delete(userId int) error
-	Update(userId int, input model.UpdateUserInput) error
 }
 
 type UserService struct {
@@ -27,30 +27,30 @@ func NewUserService(repository repository.UserRepositoryInterface) *UserService 
 	return &UserService{UserRepository: repository}
 }
 
-func (s *UserService) Create(input model.CreateUserInput) (int, error) {
-	input.Password = generatePasswordHash(*input.Password)
+func (s *UserService) Create(userData dto.CreateUserRequest) (dto.UserResponse, error) {
+	userData.Password = generatePasswordHash(*userData.Password)
 
-	return s.UserRepository.Create(input)
+	return s.UserRepository.Create(userData)
 }
 
-func (s *UserService) GetAll() ([]model.User, error) {
+func (s *UserService) GetAll() ([]dto.UserResponse, error) {
 	return s.UserRepository.GetAll()
 }
 
-func (s *UserService) GetById(userId int) (model.User, error) {
+func (s *UserService) GetById(userId int) (dto.UserResponse, error) {
+	return s.UserRepository.GetById(userId)
+}
+
+func (s *UserService) Update(userId int, userData dto.UpdateUserRequest) (dto.UserResponse, error) {
+	if err := s.UserRepository.Update(userId, userData); err != nil {
+		return dto.UserResponse{}, err
+	}
+
 	return s.UserRepository.GetById(userId)
 }
 
 func (s *UserService) Delete(userId int) error {
 	return s.UserRepository.Delete(userId)
-}
-
-func (s *UserService) Update(userId int, input model.UpdateUserInput) error {
-	if err := input.Validate(); err != nil {
-		return err
-	}
-
-	return s.UserRepository.Update(userId, input)
 }
 
 func generatePasswordHash(password string) *string {

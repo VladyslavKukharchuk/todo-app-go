@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"strings"
-	"todo-app-go/pkg/model"
+	"todo-app-go/pkg/dto"
 )
 
 type UserRepositoryInterface interface {
-	Create(user model.CreateUserInput) (int, error)
-	GetAll() ([]model.User, error)
-	GetById(userId int) (model.User, error)
+	Create(userData dto.CreateUserRequest) (dto.UserResponse, error)
+	GetAll() ([]dto.UserResponse, error)
+	GetById(userId int) (dto.UserResponse, error)
+	Update(userId int, userData dto.UpdateUserRequest) error
 	Delete(userId int) error
-	Update(userId int, input model.UpdateUserInput) error
 }
 
 type UserRepository struct {
@@ -23,69 +23,71 @@ func NewUserRepository(db *sqlx.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-func (r *UserRepository) Create(user model.CreateUserInput) (int, error) {
-	var id int
-	query := fmt.Sprintf("INSERT INTO %s (name, username, password) values ($1, $2, $3) RETURNING id", usersTable)
+func (r *UserRepository) Create(userData dto.CreateUserRequest) (dto.UserResponse, error) {
+	var user dto.UserResponse
+	query := fmt.Sprintf("INSERT INTO %s (username, email, password) values ($1, $2, $3) RETURNING id, username, email", usersTable)
 
-	row := r.db.QueryRow(query, user.Name, user.Username, user.Password)
-	if err := row.Scan(&id); err != nil {
-		return 0, err
+	row := r.db.QueryRow(query, userData.Username, userData.Email, userData.Password)
+	if err := row.Scan(&user.Id, &user.Username, &user.Email); err != nil {
+		return dto.UserResponse{}, err
 	}
 
-	return id, nil
+	return user, nil
 }
 
-func (r *UserRepository) GetAll() ([]model.User, error) {
-	var users []model.User
+func (r *UserRepository) GetAll() ([]dto.UserResponse, error) {
+	var users []dto.UserResponse
 
-	query := fmt.Sprintf("SELECT tl.id, tl.name, tl.username FROM %s tl", usersTable)
+	query := fmt.Sprintf("SELECT id, username, email FROM %s tl", usersTable)
 	err := r.db.Select(&users, query)
 
 	return users, err
 }
 
-func (r *UserRepository) GetById(userId int) (model.User, error) {
-	var list model.User
+func (r *UserRepository) GetById(userId int) (dto.UserResponse, error) {
+	var user dto.UserResponse
 
-	query := fmt.Sprintf(`SELECT tl.id, tl.name, tl.username FROM %s tl WHERE ul.user_id = $1`, usersTable)
-	err := r.db.Get(&list, query, userId)
+	query := fmt.Sprintf(`SELECT id, username, email FROM %s WHERE id = $1`, usersTable)
+	err := r.db.Get(&user, query, userId)
 
-	return list, err
+	return user, err
 }
 
-func (r *UserRepository) Delete(userId int) error {
-	query := fmt.Sprintf(`DELETE FROM %s tl USING %s ul WHERE ul.user_id=$1`, usersTable)
-
-	_, err := r.db.Exec(query, userId)
-
-	return err
-}
-
-func (r *UserRepository) Update(userId int, input model.UpdateUserInput) error {
+func (r *UserRepository) Update(userId int, userData dto.UpdateUserRequest) error {
 	setValues := make([]string, 0)
 	args := make([]interface{}, 0)
 	argId := 1
 
-	if input.Name != nil {
-		setValues = append(setValues, fmt.Sprintf("title=$%d", argId))
-		args = append(args, *input.Name)
+	if userData.Username != nil {
+		setValues = append(setValues, fmt.Sprintf("username=$%d", argId))
+		args = append(args, *userData.Username)
 		argId++
 	}
 
-	if input.Username != nil {
-		setValues = append(setValues, fmt.Sprintf("description=$%d", argId))
-		args = append(args, *input.Username)
+	if userData.Email != nil {
+		setValues = append(setValues, fmt.Sprintf("email=$%d", argId))
+		args = append(args, *userData.Email)
 		argId++
 	}
 
-	// name=$1
-	// username=$1
-	// name=$1, username=$2
+	// username=$1, email=$2
 	setQuery := strings.Join(setValues, ", ")
 
-	query := fmt.Sprintf("UPDATE %s tl SET %s FROM %s ul WHERE ul.list_id=$%d", usersTable, setQuery, argId, argId+1)
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE id=$%d", usersTable, setQuery, argId)
 	args = append(args, userId)
 
 	_, err := r.db.Exec(query, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *UserRepository) Delete(userId int) error {
+	query := fmt.Sprintf(`DELETE FROM %s WHERE id = $1`, usersTable)
+
+	_, err := r.db.Exec(query, userId)
+
 	return err
 }
