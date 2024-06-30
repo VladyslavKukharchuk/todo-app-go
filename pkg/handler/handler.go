@@ -6,44 +6,27 @@ import (
 )
 
 type Handler struct {
-	services *service.Service
+	UserHandler UserHandlerInterface
 }
 
 func NewHandler(services *service.Service) *Handler {
-	return &Handler{services: services}
+	return &Handler{
+		UserHandler: NewUserHandler(services.UserService),
+	}
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
-	auth := router.Group("/auth")
+	api := router.Group("/api")
 	{
-		auth.POST("/sign-up", h.signUp)
-		auth.POST("/sign-in", h.signIn)
-	}
-
-	api := router.Group("/api", h.userIdentity)
-	{
-		lists := api.Group("/lists")
+		lists := api.Group("/users")
 		{
-			lists.POST("/", h.createList)
-			lists.GET("/", h.getAllLists)
-			lists.GET("/:id", h.getListById)
-			lists.PUT("/:id", h.updateList)
-			lists.DELETE("/:id", h.deleteList)
-
-			items := lists.Group(":id/items")
-			{
-				items.POST("/", h.createItem)
-				items.GET("/", h.getAllItems)
-			}
-		}
-
-		items := api.Group("items")
-		{
-			items.GET("/:id", h.getItemById)
-			items.PUT("/:id", h.updateItem)
-			items.DELETE("/:id", h.deleteItem)
+			lists.POST("/", h.UserHandler.Create)
+			lists.GET("/", h.UserHandler.GetAll)
+			lists.GET("/:id", h.UserHandler.GetById)
+			lists.PUT("/:id", h.UserHandler.Update)
+			lists.DELETE("/:id", h.UserHandler.Update)
 		}
 	}
 
